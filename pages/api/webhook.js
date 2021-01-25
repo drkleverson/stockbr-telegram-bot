@@ -23,6 +23,7 @@ async function webhook(req, res) {
       text: stockResponseJson.nomres,
     }
   );*/
+  res.json([]);
 }
 
 export default webhook;
