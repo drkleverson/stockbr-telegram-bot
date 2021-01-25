@@ -1,8 +1,8 @@
 const axios = require("axios").default;
 
 async function webhook(req, res) {
-  let message = JSON.parse(req.body.message);
-
+  let message = req.body.message;
+  console.log(message.text);
   if (!message.text.indexOf("@stockbrbot")) {
     return false;
   }
