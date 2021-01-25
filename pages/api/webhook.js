@@ -4,11 +4,11 @@ async function webhook(req, res) {
   console.log(req.body.message);
 
   let message = req.body.message;
-
+  /*
   if (!message.text.indexOf("@stockbrbot")) {
-    return false;
+    res.json([]);
   }
-
+  */
   let pieces = message.text.split(" ");
   console.log(pieces);
   const stockResponse = await fetch(
