@@ -15,7 +15,7 @@ async function webhook(req, res) {
 
   const stockResponseJson = await stockResponse.json();
 
-  await axios.post(
+  axios.post(
     "https://api.telegram.org/bot1555054396:AAGOhY8_3KbwjVPZgoBtKII1XTn5WyggB9Q/sendMessage",
     {
       chat_id: message.chat.id,
