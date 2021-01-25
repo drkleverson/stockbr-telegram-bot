@@ -27,7 +27,7 @@ async function webhook(req, res) {
       stockResponseJson.preult
     );
     text = `*${stockResponseJson.nomres}*`;
-    text += `\n*R$ ${tools.moneyFormat(stockResponseJson.preult)} ${change}*`;
+    text += `\n*R$ ${tools.moneyFormat(stockResponseJson.preult)} | ${change}*`;
     text += `\n\n*Abertura:* R$ ${tools.moneyFormat(stockResponseJson.preabe)}`;
     text += `\n*Alta:* R$ ${tools.moneyFormat(stockResponseJson.premax)}`;
     text += `\n*Baixa:* R$ ${tools.moneyFormat(stockResponseJson.premin)}`;
