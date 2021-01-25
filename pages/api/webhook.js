@@ -10,12 +10,14 @@ async function webhook(req, res) {
   }
 
   let pieces = message.text.split(" ");
-
+  console.log(pieces);
   const stockResponse = await fetch(
     `https://bovespa.nihey.org/api/quote/${pieces[1]}/2021-01-22`
   );
 
+  console.log(stockResponse);
   const stockResponseJson = await stockResponse.json();
+  console.log(stockResponseJson);
 
   await axios.post(
     "https://api.telegram.org/bot1555054396:AAGOhY8_3KbwjVPZgoBtKII1XTn5WyggB9Q/sendMessage",
@@ -25,6 +27,7 @@ async function webhook(req, res) {
       text: stockResponseJson.nomres,
     }
   );
+  console.log("fim");
   res.json([]);
 }
 
