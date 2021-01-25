@@ -18,13 +18,16 @@ async function webhook(req, res) {
   console.log(stockResponse);
   const stockResponseJson = await stockResponse.json();
   console.log(stockResponseJson);
-
+  let text =
+    stockResponse.status == 200
+      ? stockResponseJson.nomres
+      : "Num achei bixo, tenta outro.";
   await axios.post(
     "https://api.telegram.org/bot1555054396:AAGOhY8_3KbwjVPZgoBtKII1XTn5WyggB9Q/sendMessage",
     {
       chat_id: message.chat.id,
       reply_to_message_id: message.message_id,
-      text: stockResponseJson.nomres,
+      text: text,
     }
   );
   console.log("fim");
