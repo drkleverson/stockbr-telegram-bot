@@ -2,11 +2,7 @@ const axios = require("axios").default;
 
 async function webhook(req, res) {
   let message = JSON.parse(req.body.message);
-  let query = JSON.parse(req.query);
 
-  if (query.token !== "1555054396:AAGOhY8_3KbwjVPZgoBtKII1XTn5WyggB9Q") {
-    return false;
-  }
   if (!message.text.indexOf("@stockbrbot")) {
     return false;
   }
