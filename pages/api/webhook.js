@@ -13,8 +13,9 @@ async function webhook(req, res) {
   */
   let pieces = message.text.split(" ");
   console.log(pieces);
+  let date = pieces[2] ? `/${pieces[2]}` : ``;
   const stockResponse = await fetch(
-    `https://bovespa.nihey.org/api/quote/${pieces[1]}/2021-01-22`
+    `https://bovespa.nihey.org/api/quote/${pieces[1]}${date}`
   );
 
   console.log(stockResponse);
