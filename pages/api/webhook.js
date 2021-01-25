@@ -1,7 +1,7 @@
 const axios = require("axios").default;
 
 async function webhook(req, res) {
-  let message = req.body.message.json();
+  let message = await req.body.message.json();
 
   if (req.query.token !== "1555054396:AAGOhY8_3KbwjVPZgoBtKII1XTn5WyggB9Q") {
     return false;
