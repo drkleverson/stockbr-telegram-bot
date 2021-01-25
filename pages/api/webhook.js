@@ -27,7 +27,10 @@ async function webhook(req, res) {
       stockResponseJson.preult
     );
     text = `*${stockResponseJson.nomres}*`;
-    text += `${change}`;
+    text += `\n\n*R$ ${tools.moneyFormat(stockResponseJson.preult)} ${change}*`;
+    text += `\n\nAbertura: R$ ${tools.moneyFormat(stockResponseJson.preabe)}`;
+    text += `\nAlta: R$ ${tools.moneyFormat(stockResponseJson.premax)}`;
+    text += `\nBaixa: R$ ${tools.moneyFormat(stockResponseJson.premin)}`;
   }
 
   await axios.post(
