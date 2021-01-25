@@ -26,8 +26,8 @@ async function webhook(req, res) {
       stockResponseJson.preabe,
       stockResponseJson.preult
     );
-    text = `${stockResponseJson.nomres}
-            ${change}`;
+    text = `*${stockResponseJson.nomres}*`;
+    text += `${change}`;
   }
 
   await axios.post(
@@ -36,6 +36,7 @@ async function webhook(req, res) {
       chat_id: message.chat.id,
       reply_to_message_id: message.message_id,
       text: text,
+      parse_mode: "markdown",
     }
   );
   console.log("fim");
