@@ -1,5 +1,6 @@
 async function webhook(req, res) {
   console.log(req.query);
+  console.log(req.query);
 
   const stockResponse = await fetch(
     `https://bovespa.nihey.org/api/quote/${req.query.stock}/2021-01-22`
