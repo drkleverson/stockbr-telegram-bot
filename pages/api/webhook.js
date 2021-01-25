@@ -3,6 +3,8 @@ const axios = require("axios").default;
 async function webhook(req, res) {
   console.log(req.body.message);
 
+  let message = req.body.message;
+
   if (!message.text.indexOf("@stockbrbot")) {
     return false;
   }
