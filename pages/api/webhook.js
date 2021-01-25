@@ -1,9 +1,11 @@
 const axios = require("axios").default;
+const tools = require("../../src/tools");
 
 async function webhook(req, res) {
   console.log(req.body.message);
 
   let message = req.body.message;
+  let text = `Desculpe ${message.from.first_name}, não consegui encontrar esta ação.`;
   /*
   if (!message.text.indexOf("@stockbrbot")) {
     res.json([]);
@@ -18,10 +20,16 @@ async function webhook(req, res) {
   console.log(stockResponse);
   const stockResponseJson = await stockResponse.json();
   console.log(stockResponseJson);
-  let text =
-    stockResponse.status == 200
-      ? stockResponseJson.nomres
-      : "Num achei bixo, tenta outro.";
+
+  if (stockResponse.status == 200) {
+    let change = tools.getPercentageChange(
+      stockResponseJson.preabe,
+      stockResponseJson.preult
+    );
+    text = `${stockResponseJson.nomres}
+            ${change}`;
+  }
+
   await axios.post(
     "https://api.telegram.org/bot1555054396:AAGOhY8_3KbwjVPZgoBtKII1XTn5WyggB9Q/sendMessage",
     {
