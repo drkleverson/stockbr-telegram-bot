@@ -34,7 +34,7 @@ async function webhook(req, res) {
 
   console.log(mentioned);
 
-  if (mentioned[0] == null) {
+  if (!mentioned || mentioned[0] == null) {
     console.log("fim - bot não foi chamado");
     return res.json([]);
   }
