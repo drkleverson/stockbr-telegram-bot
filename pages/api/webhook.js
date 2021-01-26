@@ -8,7 +8,7 @@ async function replyMessage(message, reply) {
       chat_id: message.chat.id,
       reply_to_message_id: message.message_id,
       text: reply,
-      parse_mode: "markdown",
+      parse_mode: "html",
     }
   );
 }
@@ -60,8 +60,8 @@ async function replyStockPriceRequest(message, mention) {
   
   const chartEmoji = getChartFluctuationStringEmoji(change);
 
-  let reply = `*${stockResponseJson.code}*\n`;
-  reply += `\n*R$ ${tools.moneyFormat(stockResponseJson.price)}*  ${chartEmoji} ${change}%`;
+  let reply = `<b>${stockResponseJson.code}*</b>`;
+  reply += `\n<b>R$ ${tools.moneyFormat(stockResponseJson.price)}</b>      ${chartEmoji} ${change}%`;
   reply += '\n<pre>';
   reply += `\nAbertura: R$ <b>${tools.moneyFormat(stockResponseJson.priceopen)}</b>`;
   reply += `\nAlta:     R$ <b>${tools.moneyFormat(stockResponseJson.high)}</b>`;
