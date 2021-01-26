@@ -56,11 +56,11 @@ async function replyStockPriceRequest(message, mention) {
 
   let reply = `*${stockResponseJson.code}*\n`;
   reply += `\n*R$ ${tools.moneyFormat(stockResponseJson.price)}*  ${chartEmoji} ${change}%`;
-  reply += '\n`';
-  reply += `\n*Abertura:* R$ ${tools.moneyFormat(stockResponseJson.priceopen)}`;
-  reply += `\n*Alta:*     R$ ${tools.moneyFormat(stockResponseJson.high)}`;
-  reply += `\n*Baixa:*    R$ ${tools.moneyFormat(stockResponseJson.low)}`;
-  reply += '`';
+  reply += '\n<pre>';
+  reply += `\nAbertura: R$ <b>${tools.moneyFormat(stockResponseJson.priceopen)}</b>`;
+  reply += `\nAlta:     R$ <b>${tools.moneyFormat(stockResponseJson.high)}</b>`;
+  reply += `\nBaixa:    R$ <b>${tools.moneyFormat(stockResponseJson.low)}</b>`;
+  reply += '</pre>';
 
   await replyMessage(message, reply);
 
