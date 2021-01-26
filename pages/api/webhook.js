@@ -15,7 +15,7 @@ async function webhook(req, res) {
 
   console.log(mentioned);
 
-  if (!mentioned[0]) {
+  if (mentioned[0] == null) {
     res.json([]);
   }
 
