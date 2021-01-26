@@ -17,7 +17,7 @@ async function webhook(req, res) {
     res.json([]);
   }
 
-  let stock = mentioned[0]
+  let stock = text
     .substring(mentioned.offset, mentioned.length)
     .replace("#", "");
 
