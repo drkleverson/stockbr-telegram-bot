@@ -14,9 +14,7 @@ async function replyMessage(message, reply) {
 }
 
 function getStockName(message, mention) {
-  return message.text
-    .substring(mention.offset, mention.length)
-    .replace("#", "");
+  return message.text.substr(mention.offset, mention.length).replace("#", "");
 }
 
 async function requestStockPrice(stock) {
