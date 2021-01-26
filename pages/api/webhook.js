@@ -7,7 +7,7 @@ async function webhook(req, res) {
   let message = req.body.message;
   let text = `Desculpe ${message.from.first_name}, não consegui encontrar esta ação.`;
   if (!"entities" in message) {
-    res.json([]);
+    return res.json([]);
   }
   let mentioned = message.entities.map((entity) => {
     return entity.type == "hashtag" ? entity : null;
