@@ -88,10 +88,13 @@ async function webhook(req, res) {
     return res.json([]);
   }
 
-  const resDataArr = mentioned
-    .map(mention => replyStockPriceRequest(message, mention));
+  const resDataTaskList = mentioned.map(mention => replyStockPriceRequest(message, mention));
 
-  return res.json(resDataArr.flat());
+  const resDataList = await Promise.all(resDataTaskList);
+  
+  const resData = resDataArr.flat(resDataList);
+  
+  return res.json(resData);
 }
 
 export default webhook;
