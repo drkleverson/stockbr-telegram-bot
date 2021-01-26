@@ -13,6 +13,55 @@ async function replyMessage(message, reply) {
   );
 }
 
+function getStockName(message, mention) {
+  return message.text
+    .substring(mention.offset, mention.length)
+    .replace("#", "");
+}
+
+async function requestStockPrice(stock) {
+  return await fetch(`${process.env.API_URL}${stock}`);
+}
+
+async function replyStockPriceRequest(message, mention) {
+
+  const stock = getStockName(message, mention);
+
+  console.log(stock);
+
+  const stockResponse = await requestStockPrice(stock);
+
+  console.log(stockResponse);
+
+  if (stockResponse.status !== 200) {
+    const reply = `Desculpe ${message.from.first_name}, não consegui encontrar a ação "${stock}".`;
+    await replyMessage(message, reply);
+    console.log("fim - resposta não positiva do stock");
+    return [];
+  }
+
+  const stockResponseJson = await stockResponse.json();
+
+  console.log(stockResponseJson);
+
+  const change = tools.getPercentageChange(
+    stockResponseJson.priceopen,
+    stockResponseJson.price
+  );
+
+  let reply = `*${stockResponseJson.code}*`;
+  reply += `\n*R$ ${tools.moneyFormat(stockResponseJson.price)} | ${change}*`;
+  reply += `\n\n*Abertura:* R$ ${tools.moneyFormat(stockResponseJson.priceopen)}`;
+  reply += `\n*Alta:* R$ ${tools.moneyFormat(stockResponseJson.high)}`;
+  reply += `\n*Baixa:* R$ ${tools.moneyFormat(stockResponseJson.low)}`;
+
+  await replyMessage(message, reply);
+
+  console.log("fim");
+
+  return [];
+}
+
 async function webhook(req, res) {
   if (process.env.WEBHOOK_HASH !== req.query.webhook_hash) {
     console.log("fim - webhook hash invalido");
@@ -39,41 +88,10 @@ async function webhook(req, res) {
     return res.json([]);
   }
 
-  const stock = message.text
-    .substring(mentioned[0].offset, mentioned[0].length)
-    .replace("#", "");
+  const resDataArr = mentioned
+    .map(mention => replyStockPriceRequest(message, mention));
 
-  console.log(stock);
-
-  const stockResponse = await fetch(`${process.env.API_URL}${stock}`);
-
-  console.log(stockResponse);
-
-  if (stockResponse.status !== 200) {
-    const reply = `Desculpe ${message.from.first_name}, não consegui encontrar esta ação.`;
-    await replyMessage(message, reply);
-    console.log("fim - resposta não positiva do stock");
-    return res.json([]);
-  }
-
-  const stockResponseJson = await stockResponse.json();
-  console.log(stockResponseJson);
-
-  const change = tools.getPercentageChange(
-    stockResponseJson.priceopen,
-    stockResponseJson.price
-  );
-
-  let reply = `*${stockResponseJson.code}*`;
-  reply += `\n*R$ ${tools.moneyFormat(stockResponseJson.price)} | ${change}*`;
-  reply += `\n\n*Abertura:* R$ ${tools.moneyFormat(stockResponseJson.priceopen)}`;
-  reply += `\n*Alta:* R$ ${tools.moneyFormat(stockResponseJson.high)}`;
-  reply += `\n*Baixa:* R$ ${tools.moneyFormat(stockResponseJson.low)}`;
-
-  await replyMessage(message, reply);
-  console.log("fim");
-  
-  return res.json([]);
+  return res.json(resDataArr.flat());
 }
 
 export default webhook;
