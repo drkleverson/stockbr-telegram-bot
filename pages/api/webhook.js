@@ -29,10 +29,10 @@ async function webhook(req, res) {
   );
 
   console.log(stockResponse);
-  const stockResponseJson = await stockResponse.json();
-  console.log(stockResponseJson);
-
   if (stockResponse.status == 200) {
+    const stockResponseJson = await stockResponse.json();
+    console.log(stockResponseJson);
+
     let change = tools.getPercentageChange(
       stockResponseJson.preabe,
       stockResponseJson.preult
