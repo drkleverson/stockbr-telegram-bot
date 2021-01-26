@@ -6,12 +6,14 @@ async function webhook(req, res) {
 
   let message = req.body.message;
   let text = `Desculpe ${message.from.first_name}, não consegui encontrar esta ação.`;
-  if (!message?.entities) {
+  if (message.entities || false) {
     res.json([]);
   }
   let mentioned = message.entities.map((entity) => {
     return entity.type == "hashtag" ? entity : null;
   });
+
+  console.log(mentioned);
 
   if (!mentioned[0]) {
     res.json([]);
@@ -21,6 +23,7 @@ async function webhook(req, res) {
     .substring(mentioned[0].offset, mentioned[0].length)
     .replace("#", "");
 
+  console.log(stock);
   const stockResponse = await fetch(
     `https://bovespa.nihey.org/api/quote/${stock}`
   );
