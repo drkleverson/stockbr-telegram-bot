@@ -1,15 +1,30 @@
 const axios = require("axios").default;
 const tools = require("../../src/tools");
 
+async function replyMessage(message, reply) {
+  await axios.post(
+    "https://api.telegram.org/bot1555054396:AAGOhY8_3KbwjVPZgoBtKII1XTn5WyggB9Q/sendMessage",
+    {
+      chat_id: message.chat.id,
+      reply_to_message_id: message.message_id,
+      text: reply,
+      parse_mode: "markdown",
+    }
+  );
+}
+
 async function webhook(req, res) {
   console.log(req.body.message);
 
-  let message = req.body.message;
-  let text = `Desculpe ${message.from.first_name}, não consegui encontrar esta ação.`;
-  if (entities in message) {
+  const message = req.body.message;
+
+  if (!(entities in message)) {
     res.json([]);
+    console.log("fim - mensagem incompleta");
+    return;
   }
-  let mentioned = message.entities.map((entity) => {
+
+  const mentioned = message.entities.map((entity) => {
     return entity.type == "hashtag" ? entity : null;
   });
 
@@ -17,42 +32,45 @@ async function webhook(req, res) {
 
   if (mentioned[0] == null) {
     res.json([]);
+    console.log("fim - bot não foi chamado");
+    return;
   }
 
-  let stock = message.text
+  const stock = message.text
     .substring(mentioned[0].offset, mentioned[0].length)
     .replace("#", "");
 
   console.log(stock);
+
   const stockResponse = await fetch(
     `https://bovespa.nihey.org/api/quote/${stock}`
   );
 
   console.log(stockResponse);
-  if (stockResponse.status == 200) {
-    const stockResponseJson = await stockResponse.json();
-    console.log(stockResponseJson);
 
-    let change = tools.getPercentageChange(
-      stockResponseJson.preabe,
-      stockResponseJson.preult
-    );
-    text = `*${stockResponseJson.nomres}*`;
-    text += `\n*R$ ${tools.moneyFormat(stockResponseJson.preult)} | ${change}*`;
-    text += `\n\n*Abertura:* R$ ${tools.moneyFormat(stockResponseJson.preabe)}`;
-    text += `\n*Alta:* R$ ${tools.moneyFormat(stockResponseJson.premax)}`;
-    text += `\n*Baixa:* R$ ${tools.moneyFormat(stockResponseJson.premin)}`;
+  if (stockResponse.status !== 200) {
+    const reply = `Desculpe ${message.from.first_name}, não consegui encontrar esta ação.`;
+    await replyMessage(message, reply);
+    console.log("fim - resposta não positiva do stock");
+    res.json([]);
+    return;
   }
 
-  await axios.post(
-    "https://api.telegram.org/bot1555054396:AAGOhY8_3KbwjVPZgoBtKII1XTn5WyggB9Q/sendMessage",
-    {
-      chat_id: message.chat.id,
-      reply_to_message_id: message.message_id,
-      text: text,
-      parse_mode: "markdown",
-    }
+  const stockResponseJson = await stockResponse.json();
+  console.log(stockResponseJson);
+
+  const change = tools.getPercentageChange(
+    stockResponseJson.preabe,
+    stockResponseJson.preult
   );
+
+  let reply = `*${stockResponseJson.nomres}*`;
+  reply += `\n*R$ ${tools.moneyFormat(stockResponseJson.preult)} | ${change}*`;
+  reply += `\n\n*Abertura:* R$ ${tools.moneyFormat(stockResponseJson.preabe)}`;
+  reply += `\n*Alta:* R$ ${tools.moneyFormat(stockResponseJson.premax)}`;
+  reply += `\n*Baixa:* R$ ${tools.moneyFormat(stockResponseJson.premin)}`;
+
+  await replyMessage(message, reply);
   console.log("fim");
   res.json([]);
 }
