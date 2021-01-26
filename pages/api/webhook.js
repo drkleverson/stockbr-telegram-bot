@@ -92,7 +92,7 @@ async function webhook(req, res) {
 
   const resDataList = await Promise.all(resDataTaskList);
   
-  const resData = resDataArr.flat(resDataList);
+  const resData = resDataList.flat(resDataList);
   
   return res.json(resData);
 }
