@@ -17,6 +17,12 @@ function getStockName(message, mention) {
   return message.text.substr(mention.offset, mention.length).replace("#", "");
 }
 
+function getChartFluctuationEmoji(fluctuation) {
+  if (fluctuation < 0) return '📉';
+  if (fluctuation > 0) return '📈';
+  return '📊';
+}
+
 async function requestStockPrice(stock) {
   return await fetch(`${process.env.API_URL}${stock}`);
 }
@@ -45,14 +51,16 @@ async function replyStockPriceRequest(message, mention) {
     stockResponseJson.closeyest,
     stockResponseJson.price
   );
+  
+  const chartEmoji = getChartFluctuationEmoji(change);
 
-  let reply = `*${stockResponseJson.code}*`;
-  reply += `\n*R$ ${tools.moneyFormat(stockResponseJson.price)} | ${change}%*`;
-  reply += `\n\n*Abertura:* R$ ${tools.moneyFormat(
-    stockResponseJson.priceopen
-  )}`;
-  reply += `\n*Alta:* R$ ${tools.moneyFormat(stockResponseJson.high)}`;
-  reply += `\n*Baixa:* R$ ${tools.moneyFormat(stockResponseJson.low)}`;
+  let reply = `*${stockResponseJson.code}*\n`;
+  reply += `\n*R$ ${tools.moneyFormat(stockResponseJson.price)}*  ${chartEmoji} ${change}%`;
+  reply += '\n`';
+  reply += `\n*Abertura:* R$ ${tools.moneyFormat(stockResponseJson.priceopen)}`;
+  reply += `\n*Alta:*     R$ ${tools.moneyFormat(stockResponseJson.high)}`;
+  reply += `\n*Baixa:*    R$ ${tools.moneyFormat(stockResponseJson.low)}`;
+  reply += '`';
 
   await replyMessage(message, reply);
 
