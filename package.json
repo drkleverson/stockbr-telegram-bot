@@ -20,6 +20,7 @@
   "homepage": "https://github.com/drkleverson/stockbr-telegram-bot#readme",
   "dependencies": {
     "axios": "^0.21.1",
+    "dotenv-safe": "^8.2.0",
     "next": "^10.0.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"

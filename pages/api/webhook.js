@@ -3,7 +3,7 @@ const tools = require("../../src/tools");
 
 async function replyMessage(message, reply) {
   await axios.post(
-    "https://api.telegram.org/bot1555054396:AAGOhY8_3KbwjVPZgoBtKII1XTn5WyggB9Q/sendMessage",
+    `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,
     {
       chat_id: message.chat.id,
       reply_to_message_id: message.message_id,
@@ -14,6 +14,11 @@ async function replyMessage(message, reply) {
 }
 
 async function webhook(req, res) {
+  if (process.env.WEBHOOK_HASH !== req.query.webhook_hash) {
+    console.log("fim - webhook hash invalido");
+    return res.json([]);
+  }
+
   console.log(req.body.message);
 
   const message = req.body.message;
@@ -41,9 +46,7 @@ async function webhook(req, res) {
 
   console.log(stock);
 
-  const stockResponse = await fetch(
-    `https://bovespa.nihey.org/api/quote/${stock}`
-  );
+  const stockResponse = await fetch(`${process.env.API_URL}${stock}`);
 
   console.log(stockResponse);
 
