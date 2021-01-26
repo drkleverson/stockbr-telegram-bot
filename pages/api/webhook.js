@@ -62,15 +62,17 @@ async function webhook(req, res) {
   console.log(stockResponseJson);
 
   const change = tools.getPercentageChange(
-    stockResponseJson.preabe,
-    stockResponseJson.preult
+    stockResponseJson.priceopen,
+    stockResponseJson.price
   );
 
-  let reply = `*${stockResponseJson.nomres}*`;
-  reply += `\n*R$ ${tools.moneyFormat(stockResponseJson.preult)} | ${change}*`;
-  reply += `\n\n*Abertura:* R$ ${tools.moneyFormat(stockResponseJson.preabe)}`;
-  reply += `\n*Alta:* R$ ${tools.moneyFormat(stockResponseJson.premax)}`;
-  reply += `\n*Baixa:* R$ ${tools.moneyFormat(stockResponseJson.premin)}`;
+  let reply = `*${stockResponseJson.code}*`;
+  reply += `\n*R$ ${tools.moneyFormat(stockResponseJson.price)} | ${change}*`;
+  reply += `\n\n*Abertura:* R$ ${tools.moneyFormat(
+    stockResponseJson.priceopen
+  )}`;
+  reply += `\n*Alta:* R$ ${tools.moneyFormat(stockResponseJson.high)}`;
+  reply += `\n*Baixa:* R$ ${tools.moneyFormat(stockResponseJson.low)}`;
 
   await replyMessage(message, reply);
   console.log("fim");
