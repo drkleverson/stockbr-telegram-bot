@@ -22,7 +22,6 @@ async function requestStockPrice(stock) {
 }
 
 async function replyStockPriceRequest(message, mention) {
-
   const stock = getStockName(message, mention);
 
   console.log(stock);
@@ -43,13 +42,15 @@ async function replyStockPriceRequest(message, mention) {
   console.log(stockResponseJson);
 
   const change = tools.getPercentageChange(
-    stockResponseJson.priceopen,
+    stockResponseJson.closeyest,
     stockResponseJson.price
   );
 
   let reply = `*${stockResponseJson.code}*`;
   reply += `\n*R$ ${tools.moneyFormat(stockResponseJson.price)} | ${change}*`;
-  reply += `\n\n*Abertura:* R$ ${tools.moneyFormat(stockResponseJson.priceopen)}`;
+  reply += `\n\n*Abertura:* R$ ${tools.moneyFormat(
+    stockResponseJson.priceopen
+  )}`;
   reply += `\n*Alta:* R$ ${tools.moneyFormat(stockResponseJson.high)}`;
   reply += `\n*Baixa:* R$ ${tools.moneyFormat(stockResponseJson.low)}`;
 
@@ -86,12 +87,14 @@ async function webhook(req, res) {
     return res.json([]);
   }
 
-  const resDataTaskList = mentioned.map(mention => replyStockPriceRequest(message, mention));
+  const resDataTaskList = mentioned.map((mention) =>
+    replyStockPriceRequest(message, mention)
+  );
 
   const resDataList = await Promise.all(resDataTaskList);
-  
+
   const resData = resDataList.flat(resDataList);
-  
+
   return res.json(resData);
 }
 
