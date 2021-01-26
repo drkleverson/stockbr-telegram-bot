@@ -23,6 +23,12 @@ function getChartFluctuationEmoji(fluctuation) {
   return '📊';
 }
 
+function getChartFluctuationStringEmoji(fluctuation) {
+  if (fluctuation.includes('-')) return '📉';
+  if (fluctuation.includes('+')) return '📈';
+  return '📊';
+}
+
 async function requestStockPrice(stock) {
   return await fetch(`${process.env.API_URL}${stock}`);
 }
@@ -52,7 +58,7 @@ async function replyStockPriceRequest(message, mention) {
     stockResponseJson.price
   );
   
-  const chartEmoji = getChartFluctuationEmoji(change);
+  const chartEmoji = getChartFluctuationStringEmoji(change);
 
   let reply = `*${stockResponseJson.code}*\n`;
   reply += `\n*R$ ${tools.moneyFormat(stockResponseJson.price)}*  ${chartEmoji} ${change}%`;
