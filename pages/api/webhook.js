@@ -60,7 +60,7 @@ async function replyStockPriceRequest(message, mention) {
   
   const chartEmoji = getChartFluctuationStringEmoji(change);
 
-  let reply = `<b>${stockResponseJson.code}*</b>`;
+  let reply = `<b>${stockResponseJson.code}</b>\n`;
   reply += `\n<b>R$ ${tools.moneyFormat(stockResponseJson.price)}</b>      ${chartEmoji} ${change}%`;
   reply += '\n<pre>';
   reply += `\nAbertura: R$ <b>${tools.moneyFormat(stockResponseJson.priceopen)}</b>`;
