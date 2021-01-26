@@ -6,16 +6,23 @@ async function webhook(req, res) {
 
   let message = req.body.message;
   let text = `Desculpe ${message.from.first_name}, não consegui encontrar esta ação.`;
-  /*
-  if (!message.text.indexOf("@stockbrbot")) {
+  if (!message?.entities) {
     res.json([]);
   }
-  */
-  let pieces = message.text.split(" ");
-  console.log(pieces);
-  let date = pieces[2] ? `/${pieces[2]}` : ``;
+  let mentioned = message.entities.map((entity) => {
+    return entity.type == "hashtag";
+  });
+
+  if (!mentioned) {
+    res.json([]);
+  }
+
+  let stock = mentioned
+    .substring(mentioned.offset, mentioned.length)
+    .replace("#", "");
+
   const stockResponse = await fetch(
-    `https://bovespa.nihey.org/api/quote/${pieces[1]}${date}`
+    `https://bovespa.nihey.org/api/quote/${stock}`
   );
 
   console.log(stockResponse);
