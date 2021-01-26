@@ -10,15 +10,15 @@ async function webhook(req, res) {
     res.json([]);
   }
   let mentioned = message.entities.map((entity) => {
-    return entity.type == "hashtag";
+    return entity.type == "hashtag" ? entity : null;
   });
 
-  if (!mentioned) {
+  if (!mentioned[0]) {
     res.json([]);
   }
 
   let stock = message.text
-    .substring(mentioned.offset, mentioned.length)
+    .substring(mentioned[0].offset, mentioned[0].length)
     .replace("#", "");
 
   const stockResponse = await fetch(
