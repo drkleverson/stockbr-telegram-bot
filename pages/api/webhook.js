@@ -18,7 +18,7 @@ async function webhook(req, res) {
 
   const message = req.body.message;
 
-  if (!(entities in message)) {
+  if (!("entities" in message)) {
     console.log("fim - mensagem incompleta");
     return res.json([]);
   }
