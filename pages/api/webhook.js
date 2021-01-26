@@ -19,9 +19,9 @@ async function webhook(req, res) {
     return res.json([]);
   }
 
-  console.log(req.body.message);
-
   const message = req.body.message;
+
+  console.log(message);
 
   if (message && !("entities" in message)) {
     console.log("fim - mensagem incompleta");
@@ -35,9 +35,8 @@ async function webhook(req, res) {
   console.log(mentioned);
 
   if (mentioned[0] == null) {
-    res.json([]);
     console.log("fim - bot não foi chamado");
-    return;
+    return res.json([]);
   }
 
   const stock = message.text
@@ -54,8 +53,7 @@ async function webhook(req, res) {
     const reply = `Desculpe ${message.from.first_name}, não consegui encontrar esta ação.`;
     await replyMessage(message, reply);
     console.log("fim - resposta não positiva do stock");
-    res.json([]);
-    return;
+    return res.json([]);
   }
 
   const stockResponseJson = await stockResponse.json();
@@ -68,15 +66,14 @@ async function webhook(req, res) {
 
   let reply = `*${stockResponseJson.code}*`;
   reply += `\n*R$ ${tools.moneyFormat(stockResponseJson.price)} | ${change}*`;
-  reply += `\n\n*Abertura:* R$ ${tools.moneyFormat(
-    stockResponseJson.priceopen
-  )}`;
+  reply += `\n\n*Abertura:* R$ ${tools.moneyFormat(stockResponseJson.priceopen)}`;
   reply += `\n*Alta:* R$ ${tools.moneyFormat(stockResponseJson.high)}`;
   reply += `\n*Baixa:* R$ ${tools.moneyFormat(stockResponseJson.low)}`;
 
   await replyMessage(message, reply);
   console.log("fim");
-  res.json([]);
+  
+  return res.json([]);
 }
 
 export default webhook;
