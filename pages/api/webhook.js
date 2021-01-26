@@ -47,7 +47,7 @@ async function replyStockPriceRequest(message, mention) {
   );
 
   let reply = `*${stockResponseJson.code}*`;
-  reply += `\n*R$ ${tools.moneyFormat(stockResponseJson.price)} | ${change}*`;
+  reply += `\n*R$ ${tools.moneyFormat(stockResponseJson.price)} | ${change}%*`;
   reply += `\n\n*Abertura:* R$ ${tools.moneyFormat(
     stockResponseJson.priceopen
   )}`;
