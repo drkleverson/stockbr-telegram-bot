@@ -27,6 +27,6 @@ export function getPercentageChange(oldNumber: number, newNumber: number): strin
   const decreaseValue = newNumber - oldNumber;
   const result = (decreaseValue / oldNumber) * 100;
   const mathSymbol = result > 0 ? "+" : "";
-  const money = moneyFormat(result.toFixed(2));
-  return mathSymbol + money;
+  const formatted = moneyFormat(result.toFixed(2));
+  return mathSymbol + formatted;
 }
