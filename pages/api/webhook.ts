@@ -47,8 +47,8 @@ async function replyStockPriceTicker(message, ticker: string): Promise<any[]> {
   reply += `\n<b>R$ ${currentPriceStr}</b> | ${chartEmoji} ${change}%`;
   reply += '\n';
   reply += `\n🟢 R$ <b>${openningPriceStr}</b>`;
-  reply += `\n▲ R$ <b>${highestPriceStr}</b>`;
-  reply += `\n▼ R$ <b>${lowestPriceStr}</b>`;
+  reply += `\n🔼 R$ <b>${highestPriceStr}</b>`;
+  reply += `\n🔽 R$ <b>${lowestPriceStr}</b>`;
   reply += '\n';
   reply += `\n<i>Atualizado em ${datePtBr(stockResponseJson.tradetime)}</i>`;
 
