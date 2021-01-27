@@ -1,5 +1,5 @@
 import axios from "axios";
-import * as tools from "../../src/tools";
+import { getPercentageChange, moneyFormat } from "../../src/tools";
 
 const telegramSendMenssageUrl = `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`;
 
@@ -25,7 +25,7 @@ function getChartFluctuationEmoji(fluctuation: number) {
   return '📊';
 }
 
-function getChartFluctuationStringEmoji(fluctuation: "+" | '-' | '') {
+function getChartFluctuationStringEmoji(fluctuation: "+" | '-' | string) {
   if (fluctuation.includes('-')) return '📉';
   if (fluctuation.includes('+')) return '📈';
   return '📊';
@@ -36,6 +36,7 @@ async function requestStockPrice(stock: string) {
 }
 
 async function replyStockPriceRequest(message, mention) {
+
   const stock = getStockName(message, mention);
 
   console.log(stock);
@@ -55,7 +56,7 @@ async function replyStockPriceRequest(message, mention) {
 
   console.log(stockResponseJson);
 
-  const change = tools.getPercentageChange(
+  const change = getPercentageChange(
     stockResponseJson.closeyest,
     stockResponseJson.price
   );
@@ -63,11 +64,11 @@ async function replyStockPriceRequest(message, mention) {
   const chartEmoji = getChartFluctuationStringEmoji(change);
 
   let reply = `<b>${stockResponseJson.code}</b>\n`;
-  reply += `\n<b>R$ ${tools.moneyFormat(stockResponseJson.price)}</b>      ${chartEmoji} ${change}%`;
+  reply += `\n<b>R$ ${moneyFormat(stockResponseJson.price)}</b>      ${chartEmoji} ${change}%`;
   reply += '\n';
-  reply += `\nAbertura...R$ <b>${tools.moneyFormat(stockResponseJson.priceopen)}</b>`;
-  reply += `\nAlta.......R$ <b>${tools.moneyFormat(stockResponseJson.high)}</b>`;
-  reply += `\nBaixa......R$ <b>${tools.moneyFormat(stockResponseJson.low)}</b>`;
+  reply += `\nAbertura...R$ <b>${moneyFormat(stockResponseJson.priceopen)}</b>`;
+  reply += `\nAlta.......R$ <b>${moneyFormat(stockResponseJson.high)}</b>`;
+  reply += `\nBaixa......R$ <b>${moneyFormat(stockResponseJson.low)}</b>`;
 
   await replyMessage(message, reply);
 
@@ -91,7 +92,7 @@ async function webhook(req, res) {
     return res.json([]);
   }
 
-  const mentioned = message.entities.map((entity) => {
+  const mentioned: any[] = message.entities.map((entity) => {
     return entity.type == "hashtag" ? entity : null;
   });
 
@@ -102,13 +103,11 @@ async function webhook(req, res) {
     return res.json([]);
   }
 
-  const resDataTaskList = mentioned.map((mention) =>
-    replyStockPriceRequest(message, mention)
-  );
+  const resDataTaskList = mentioned.map((m) => replyStockPriceRequest(message, m));
 
   const resDataList = await Promise.all(resDataTaskList);
 
-  const resData = resDataList.flat(resDataList);
+  const resData = resDataList.flat();
 
   return res.json(resData);
 }
