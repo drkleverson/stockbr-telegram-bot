@@ -18,9 +18,7 @@ export function timePtBr(time = Date()): string {
 }
 
 export function datePtBr(date = Date()): string {
-  return new Date(date).toLocaleString("pt-br", {
-    timeZone: "America/Sao_Paulo",
-  });
+  return new Date(date).toLocaleString("pt-br");
 }
 
 export function getPercentageChange(oldNumber: number, newNumber: number): string {
