@@ -2,7 +2,7 @@ export async function requestStockPrice(stock: string) {
   return await fetch(`${process.env.API_URL}${stock}`);
 }
 
-export function getTickerName(message, mention) {
+export function getTickerNameFromMention(message, mention) {
 
   const start = mention.offset + 1;
   const substrLen = mention.length;

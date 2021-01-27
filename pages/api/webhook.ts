@@ -1,14 +1,22 @@
 import { getPercentageChange, moneyFormat } from "../../src/tools";
 import { getChartFluctuationStringEmoji } from "./getChartFluctuationStringEmoji";
 import { replyMessage } from "../../src/telegram";
-import { getTickerName, requestStockPrice } from "../../src/b3-api-sdk";
+import { getTickerNameFromMention, requestStockPrice } from "../../src/b3-api-sdk";
 
 
-async function replyStockPriceRequest(message, mention) {
+async function replyStockPriceMention(message, mention): Promise<any[]> {
 
-  const ticker = getTickerName(message, mention);
+  const ticker = getTickerNameFromMention(message, mention);
 
   console.log(ticker);
+
+  return replyStockPriceTicker(message, ticker);
+}
+
+/**
+ * Pode-se usar depois com o cifrão $.
+ */
+async function replyStockPriceTicker(message, ticker: string): Promise<any[]> {
 
   const stockResponse = await requestStockPrice(ticker);
 
@@ -81,7 +89,7 @@ async function webhook(req, res) {
     return res.json([]);
   }
 
-  const resDataTaskList = mentioned.map((m) => replyStockPriceRequest(message, m));
+  const resDataTaskList = mentioned.map((m) => replyStockPriceMention(message, m));
 
   const resDataList = await Promise.all(resDataTaskList);
 
