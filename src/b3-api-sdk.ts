@@ -8,9 +8,9 @@ export function getTickerNameFromMention(message, mention) {
   const substrLen = mention.length;
 
   const ticker = message.text.substr(start, substrLen);
-
+/*
   if (ticker.length < 4 || ticker.length > 5)
     throw new Error('Invalid ticker!');
-
+  */
   return ticker;
 }
