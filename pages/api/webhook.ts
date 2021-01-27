@@ -1,54 +1,21 @@
-import axios from "axios";
 import { getPercentageChange, moneyFormat } from "../../src/tools";
+import { getChartFluctuationStringEmoji } from "./getChartFluctuationStringEmoji";
+import { replyMessage } from "../../src/telegram";
+import { getTickerName, requestStockPrice } from "../../src/b3-api-sdk";
 
-const telegramSendMenssageUrl = `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`;
-
-async function replyMessage(message, reply) {
-  await axios.post(
-    telegramSendMenssageUrl,
-    {
-      chat_id: message.chat.id,
-      reply_to_message_id: message.message_id,
-      text: reply,
-      parse_mode: "html",
-    }
-  );
-}
-
-function getStockName(message, mention) {
-  return message.text.substr(mention.offset, mention.length).replace("#", "");
-}
-
-function getChartFluctuationEmoji(fluctuation: number) {
-  if (fluctuation < 0) return '📉';
-  if (fluctuation > 0) return '📈';
-  return '📊';
-}
-
-function getChartFluctuationStringEmoji(fluctuation: "+" | '-' | string) {
-  if (fluctuation.includes('-')) return '📉';
-  if (fluctuation.includes('+')) return '📈';
-  return '📊';
-}
-
-async function requestStockPrice(stock: string) {
-  return await fetch(`${process.env.API_URL}${stock}`);
-}
 
 async function replyStockPriceRequest(message, mention) {
 
-  const stock = getStockName(message, mention);
+  const ticker = getTickerName(message, mention);
 
-  console.log(stock);
+  console.log(ticker);
 
-  const stockResponse = await requestStockPrice(stock);
+  const stockResponse = await requestStockPrice(ticker);
 
   console.log(stockResponse);
 
   if (stockResponse.status !== 200) {
-    const reply = `Desculpe ${message.from.first_name}, não consegui encontrar a ação "${stock}".`;
-    await replyMessage(message, reply);
-    console.log("fim - resposta não positiva do stock");
+    await invalidStockReply(message, ticker);
     return [];
   }
 
@@ -63,18 +30,29 @@ async function replyStockPriceRequest(message, mention) {
 
   const chartEmoji = getChartFluctuationStringEmoji(change);
 
+  const openningPriceStr = moneyFormat(stockResponseJson.priceopen);
+  const highestPriceStr = moneyFormat(stockResponseJson.high);
+  const lowestPriceStr = moneyFormat(stockResponseJson.low);
+  const currentPriceStr = moneyFormat(stockResponseJson.price);
+
   let reply = `<b>${stockResponseJson.code}</b>\n`;
-  reply += `\n<b>R$ ${moneyFormat(stockResponseJson.price)}</b>      ${chartEmoji} ${change}%`;
+  reply += `\n<b>R$ ${currentPriceStr}</b>      ${chartEmoji} ${change}%`;
   reply += '\n';
-  reply += `\nAbertura...R$ <b>${moneyFormat(stockResponseJson.priceopen)}</b>`;
-  reply += `\nAlta.......R$ <b>${moneyFormat(stockResponseJson.high)}</b>`;
-  reply += `\nBaixa......R$ <b>${moneyFormat(stockResponseJson.low)}</b>`;
+  reply += `\nAbertura...R$ <b>${openningPriceStr}</b>`;
+  reply += `\nAlta.......R$ <b>${highestPriceStr}</b>`;
+  reply += `\nBaixa......R$ <b>${lowestPriceStr}</b>`;
 
   await replyMessage(message, reply);
 
   console.log("fim");
 
   return [];
+}
+
+async function invalidStockReply(message: any, ticker: any) {
+  const reply = `Desculpe ${message.from.first_name}, não consegui encontrar a ação "${ticker}".`;
+  await replyMessage(message, reply);
+  console.log("fim - resposta não positiva do stock");
 }
 
 async function webhook(req, res) {
