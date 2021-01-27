@@ -1,5 +1,5 @@
-import { getPercentageChange, moneyFormat } from "../../src/tools";
-import { getChartFluctuationStringEmoji } from "./getChartFluctuationStringEmoji";
+import { getPercentageChange, moneyFormat,datePtBr } from "../../src/tools";
+import { getChartFluctuationStringEmoji } from "../../src/getChartFluctuationStringEmoji";
 import { replyMessage } from "../../src/telegram";
 import { getTickerNameFromMention, requestStockPrice } from "../../src/b3-api-sdk";
 
@@ -44,11 +44,13 @@ async function replyStockPriceTicker(message, ticker: string): Promise<any[]> {
   const currentPriceStr = moneyFormat(stockResponseJson.price);
 
   let reply = `<b>${stockResponseJson.code}</b>\n`;
-  reply += `\n<b>R$ ${currentPriceStr}</b>      ${chartEmoji} ${change}%`;
+  reply += `\n<b>R$ ${currentPriceStr}</b> | ${chartEmoji} ${change}%`;
   reply += '\n';
-  reply += `\nAbertura...R$ <b>${openningPriceStr}</b>`;
-  reply += `\nAlta.......R$ <b>${highestPriceStr}</b>`;
-  reply += `\nBaixa......R$ <b>${lowestPriceStr}</b>`;
+  reply += `\n🟢 R$ <b>${openningPriceStr}</b>`;
+  reply += `\n▲ R$ <b>${highestPriceStr}</b>`;
+  reply += `\n▼ R$ <b>${lowestPriceStr}</b>`;
+  reply += '\n';
+  reply += `\n<i>Referene ao dia ${datePtBr(stockResponseJson.day)}</i>`;
 
   await replyMessage(message, reply);
 
