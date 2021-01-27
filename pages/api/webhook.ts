@@ -1,9 +1,11 @@
-const axios = require("axios").default;
-const tools = require("../../src/tools");
+import axios from "axios";
+import * as tools from "../../src/tools";
+
+const telegramSendMenssageUrl = `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`;
 
 async function replyMessage(message, reply) {
   await axios.post(
-    `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,
+    telegramSendMenssageUrl,
     {
       chat_id: message.chat.id,
       reply_to_message_id: message.message_id,
@@ -17,19 +19,19 @@ function getStockName(message, mention) {
   return message.text.substr(mention.offset, mention.length).replace("#", "");
 }
 
-function getChartFluctuationEmoji(fluctuation) {
+function getChartFluctuationEmoji(fluctuation: number) {
   if (fluctuation < 0) return '📉';
   if (fluctuation > 0) return '📈';
   return '📊';
 }
 
-function getChartFluctuationStringEmoji(fluctuation) {
+function getChartFluctuationStringEmoji(fluctuation: "+" | '-' | '') {
   if (fluctuation.includes('-')) return '📉';
   if (fluctuation.includes('+')) return '📈';
   return '📊';
 }
 
-async function requestStockPrice(stock) {
+async function requestStockPrice(stock: string) {
   return await fetch(`${process.env.API_URL}${stock}`);
 }
 
@@ -57,7 +59,7 @@ async function replyStockPriceRequest(message, mention) {
     stockResponseJson.closeyest,
     stockResponseJson.price
   );
-  
+
   const chartEmoji = getChartFluctuationStringEmoji(change);
 
   let reply = `<b>${stockResponseJson.code}</b>\n`;
